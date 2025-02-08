@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat com IA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      height: 400px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 15px;
+    }
+    .user {
+      text-align: right;
+    }
+    .bot {
+      text-align: left;
+    }
+    .message p {
+      display: inline-block;
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 80%;
+    }
+    .user p {
+      background-color: #DCF8C6;
+    }
+    .bot p {
+      background-color: #ECECEC;
+    }
+    #inputArea {
+      max-width: 600px;
+      margin: 10px auto;
+      display: flex;
+    }
+    #inputArea input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+      outline: none;
+    }
+    #inputArea button {
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-left: 0;
+      border-radius: 0 5px 5px 0;
+      background-color: #4CAF50;
+      color: #fff;
+      cursor: pointer;
+    }
+    #inputArea button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Chat com IA</h2>
+  <div id="chat"></div>
+  <div id="inputArea">
+    <input type="text" id="prompt" placeholder="Digite sua mensagem..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+  
+  <script>
+    // Função para adicionar mensagens no chat
+    function appendMessage(sender, text) {
+      const chatDiv = document.getElementById('chat');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message ' + sender;
+      const messageText = document.createElement('p');
+      messageText.innerText = text;
+      messageDiv.appendChild(messageText);
+      chatDiv.appendChild(messageDiv);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    
+    // Função para enviar mensagem para o servidor
+    function sendMessage() {
+      const promptInput = document.getElementById('prompt');
+      const promptText = promptInput.value.trim();
+      if (promptText === "") return;
+      
+      appendMessage('user', promptText);
+      promptInput.value = "";
+      
+      fetch('/ask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({prompt: promptText})
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.answer) {
+          appendMessage('bot', data.answer);
+        } else if (data.error) {
+          appendMessage('bot', 'Erro: ' + data.error);
+        }
+      })
+      .catch(error => {
+        appendMessage('bot', 'Erro ao se comunicar com o servidor.');
+      });
+    }
+    
+    // Permite enviar a mensagem ao pressionar a tecla "Enter"
+    document.getElementById('prompt').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

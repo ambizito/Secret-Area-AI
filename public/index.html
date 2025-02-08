@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat com IA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
+      background-color: #f5f5f5;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      height: 400px;
+      overflow-y: auto;
+    }
+    p {
+      margin: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      max-width: 80%;
+    }
+    .user {
+      text-align: right;
+      background-color: #DCF8C6;
+      margin-left: auto;
+    }
+    .bot {
+      text-align: left;
+      background-color: #ECECEC;
+      margin-right: auto;
+    }
+    #inputArea {
+      max-width: 600px;
+      margin: 10px auto;
+      display: flex;
+    }
+    #inputArea input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+      outline: none;
+    }
+    #inputArea button {
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-left: 0;
+      border-radius: 0 5px 5px 0;
+      background-color: #4CAF50;
+      color: #fff;
+      cursor: pointer;
+    }
+    #inputArea button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Chat com IA</h2>
+  <div id="chat"></div>
+  <div id="inputArea">
+    <input type="text" id="prompt" placeholder="Digite sua mensagem..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+
+  <script>
+    function appendMessage(sender, text) {
+      const chatDiv = document.getElementById('chat');
+      const msg = document.createElement('p');
+      msg.className = sender;
+      msg.innerText = text;
+      chatDiv.appendChild(msg);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('prompt');
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage('user', text);
+      input.value = "";
+      try {
+        const response = await fetch('/api/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: text })
+        });
+        const data = await response.json();
+        appendMessage('bot', data.answer);
+      } catch (error) {
+        appendMessage('bot', "Erro ao se comunicar com o servidor.");
+      }
+    }
+
+    document.getElementById('prompt').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>

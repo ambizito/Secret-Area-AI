@@ -1,0 +1,16 @@
+{
+  "name": "secret-area-ai",
+  "version": "1.0.0",
+  "description": "O Secret Area AI é um projeto que visa trazer a experiência de um assistente de inteligência artificial semelhante ao ChatGPT, mas operando 100% localmente dentro de uma rede LAN. Isso garante privacidade total, eliminando qualquer dependência da nuvem e mantendo os dados completamente sob controle do usuário.  A aplicação proporciona uma interface web intuitiva e responsiva, permitindo interações fluidas com um modelo de IA baixado e executado localmente via Ollama. Além disso, o projeto tem como foco a integração com ambientes de desenvolvimento, possibilitando o uso direto dentro do VSCode local e remoto para auxiliar na programação.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "expres": "^0.0.5"
+  }
+}
